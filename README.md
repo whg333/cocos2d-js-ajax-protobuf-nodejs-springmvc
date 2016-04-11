@@ -9,7 +9,18 @@ This example shows how to use cocos2d-js/html-ajax to transfer protocol buffers 
 
 ## Snapshots
 below is the TestProtobuf.proto
-![5](./images/5.png)
+
+```java
+package TestProtobuf;
+
+option java_package = "com.why.game.protobuf";
+option java_outer_classname = "TestProtobuf";
+
+message TestProto{
+	optional int32 id = 1;
+	optional string name = 2;
+}
+```
 
 you will see below Snapshots when you visit `http://localhost:3000`
 ![1](./images/1.png)
