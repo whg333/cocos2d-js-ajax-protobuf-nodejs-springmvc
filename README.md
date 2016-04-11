@@ -7,6 +7,12 @@ This example shows how to use cocos2d-js/html-ajax to transfer protocol buffers 
 3. Run: `node server.js`
 4. Open `http://localhost:3000` in a recent browser
 
+## Instructions for Java
+1. Import project to your `Eclipse`
+2. Convert to `Maven Project`
+3. Run on `Server (jetty or tomcat)`, make sure your server context path is `/` and port is `3000`
+4. Open `http://localhost:3000` in a recent browser
+
 ## Snapshots
 below is the TestProtobuf.proto
 
