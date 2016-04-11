@@ -1,0 +1,251 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.why</groupId>
+	<artifactId>cocos2d-js-ajax-protobuf-nodejs-springmvc</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<parent>
+		<groupId>com.why</groupId>
+		<artifactId>why-game-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<build>
+		<finalName>cocos2d-js-ajax-protobuf-nodejs-springmvc</finalName>
+		<pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.0.1</version>
+				<configuration>
+					<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+		</pluginManagement>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>${dir.name}/**</include>
+					<include>com/**</include>
+					<include>spring/*</include>
+					<include>*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>applicationContext.xml</include>
+					<include>app_tencent.xml</include>
+					<include>constant_file.properties</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>applicationContext.xml</include>
+					<include>com/**</include>
+					<include>*</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>applicationContext.xml</include>
+				</includes>
+			</testResource>
+
+		</testResources>
+	</build>
+	<profiles>
+		<!-- by default, local profile will be used, if you want to use other 
+			profiles, please add -Denv=profileId to your mvn command. 
+			eg:mvn -Denv=mobile01 clean compile package -->
+		<profile>
+			<!-- 腾讯有朋友社区和qzone社区两个平台，分别对应platform_pengyou.properties和platform_qzone.properties 
+				服务端部署脚本应当用其中一个文件覆盖platform.properties，才能正常使用。默认是qzone社区。 -->
+			<id>mobile01</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>mobile01</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>mobile01</dir.name>
+				<db.properties>${dir.name}/db.properties</db.properties>
+				<platform.properties>${dir.name}/platform.properties</platform.properties>
+				<repo.config>${dir.name}/app.xml</repo.config>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<netty-server.properties>${dir.name}/netty-server.properties</netty-server.properties>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 请每个开发人员都自己分支local目录，修改*.properties和app.xml为适合自己本机的配置， 不允许再在pom内部定义自己本机的profile，以免影响他人 -->
+			<id>local</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>local</value>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<dir.name>local</dir.name>
+				<db.properties>${dir.name}/db.properties</db.properties>
+				<platform.properties>${dir.name}/platform.properties</platform.properties>
+				<repo.config>${dir.name}/app.xml</repo.config>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<netty-server.properties>${dir.name}/netty-server.properties</netty-server.properties>
+			</properties>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- 跨域CORS支持 -->
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-catalina</artifactId>
+		    <version>7.0.41</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.thetransactioncompany</groupId>
+		    <artifactId>cors-filter</artifactId>
+		    <version>1.7</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.thetransactioncompany</groupId>
+		    <artifactId>java-property-utils</artifactId>
+		    <version>1.9</version>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<!-- slf4j and junit -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- mysql jdbc driver & jdbc connection pool -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.34</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+
+		<!-- springframework 4.0.7 RELEASE -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.1.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>4.1.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>4.1.7.RELEASE</version>
+		</dependency>
+		 
+		<!-- spring mvc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>4.1.7.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>  
+            <groupId>com.fasterxml.jackson.core</groupId>  
+            <artifactId>jackson-core</artifactId>  
+            <version>2.1.0</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>com.fasterxml.jackson.core</groupId>  
+            <artifactId>jackson-databind</artifactId>  
+            <version>2.1.0</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>com.fasterxml.jackson.core</groupId>  
+            <artifactId>jackson-annotations</artifactId>  
+            <version>2.1.0</version>  
+        </dependency>
+		
+		<!-- protobuf -->
+		<dependency>
+			<groupId>com.google.code</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>2.4.0a</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.googlecode.protobuf-java-format</groupId>
+		    <artifactId>protobuf-java-format</artifactId>
+		    <version>1.2</version>
+		</dependency>
+		
+		<!-- httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.3.2</version>
+		</dependency>
+
+	</dependencies>
+</project>

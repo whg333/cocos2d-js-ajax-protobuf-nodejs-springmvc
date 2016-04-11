@@ -1,0 +1,8 @@
+.classpath
+.settings/
+.project
+.idea/
+node_modules/
+src/main/webapp/cocos2d-js/frameworks/
+src/main/webapp/protobuf/*.js
+target/
