@@ -50,11 +50,10 @@ var server = http.createServer(function(request, response){
             	postData += chunk;
             });
             request.on('end', function () {
-                console.log(postData);
                 response.writeHead(200, {'Content-Type': 'application/json'});
                 response.end(postData);
             });
-    	}else if(request.url.indexOf('proto') != -1){
+    	}else if(request.url.indexOf('protobuf') != -1){
     		//BufferHelper参考链接 http://www.infoq.com/cn/articles/nodejs-about-buffer/
             var bufferHelper = new BufferHelper();
             request.on('data', function (chunk) {

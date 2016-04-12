@@ -11,58 +11,23 @@
         if (typeof dcodeIO === 'undefined' || !dcodeIO.ProtoBuf) {
             throw(new Error("ProtoBuf.js is not present. Please see www/index.html for manual setup instructions."));
         }
+
+        var ProtoBuf = dcodeIO.ProtoBuf,
+                TestProtobuf = ProtoBuf.loadProtoFile('../protobuf/TestProtobuf.proto').build('TestProtobuf'),
+                TestProto = TestProtobuf.TestProto;
+
         $(function(){
             console.log('jquery start...');
             $id = $('#id');
             $name = $('#name');
 
-            var ProtoBuf = dcodeIO.ProtoBuf,
-                    TestProtobuf = ProtoBuf.loadProtoFile('../protobuf/TestProtobuf.proto').build('TestProtobuf'),
-                    TestProto = TestProtobuf.TestProto;
-
             $('#sendForm').submit(function () {
-                var xhr = createXMLHttpRequest();
-                xhr.open('POST', 'http://localhost:3000/proto.why');
-                xhr.setRequestHeader('Content-Type','application/x-protobuf');
-                xhr.setRequestHeader('Accept','application/x-protobuf');
-                if (xhr.overrideMimeType){
-                    //这个是必须的，否则返回的是字符串，导致protobuf解码错误
-                    //具体见http://www.ruanyifeng.com/blog/2012/09/xmlhttprequest_level_2.html
-                    xhr.overrideMimeType('text/plain; charset=x-user-defined');
+                var protocol = $('input[type="radio"][name="protocol"]:checked').val();
+                console.log(protocol);
+                if(!protocol){
+                    protocol = 'protobuf';
                 }
-                xhr.onreadystatechange = function(){
-                    if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207) ) {
-                        var data = xhr.responseText;
-                        console.log(data);
-                        var protobufResp = TestProto.decode(str2bytes(data));
-                        var protobuf2JsonResp = JSON.stringify(protobufResp);
-                        console.log(protobuf2JsonResp);
-                        $('#response').text(protobuf2JsonResp).css("color","red");
-                    }
-                };
-
-                var testJson = {};
-                if($id.val() != ''){
-                    var idVal = $id.val();
-                    testJson.id = parseInt(idVal);
-                    if(isNaN(testJson.id)){
-                        alert('id=[ '+idVal+' ]! input id must int!');
-                        $id.val('');
-                        $id.focus();
-                        return false;
-                    }
-                }
-                if($name.val() != ''){
-                    testJson.name = $name.val();
-                }
-                /*var testProto = new TestProto({
-                    id:10014,
-                    name:'testProtoName测试999'
-                });
-                console.log(TestProto.decode(testProto.toBuffer()));*/
-                var testProto = new TestProto(testJson);
-                xhr.send(testProto.toBuffer());
-
+                postRequest(protocol);
                 return false;
             });
 
@@ -74,6 +39,66 @@
             }else if(window.XMLHttpRequest){ //others
                 return new XMLHttpRequest();
             }
+        }
+
+        function postRequest(protocol){
+            var isProtobuf = protocol == 'protobuf';
+            var xhr = createXMLHttpRequest();
+            xhr.open('POST', 'http://localhost:3000/'+protocol+'.why');
+            xhr.setRequestHeader('Content-Type', isProtobuf?'application/x-protobuf':'application/json');
+            xhr.setRequestHeader('Accept', isProtobuf?'application/x-protobuf':'application/json');
+            if (isProtobuf && xhr.overrideMimeType){
+                //这个是必须的，否则返回的是字符串，导致protobuf解码错误
+                //具体见http://www.ruanyifeng.com/blog/2012/09/xmlhttprequest_level_2.html
+                xhr.overrideMimeType('text/plain; charset=x-user-defined');
+            }
+            xhr.onreadystatechange = function(){
+                if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207) ) {
+                    var data = xhr.responseText;
+                    console.log(xhr.response);
+                    console.log(data);
+                    var jsonResp;
+                    if(isProtobuf){
+                        var protobufResp = TestProto.decode(str2bytes(data));
+                        jsonResp = JSON.stringify(protobufResp);
+                    }else{
+                        jsonResp = JSON.stringify(JSON.parse(data));
+                    }
+                    console.log(jsonResp);
+                    $('#response').text(jsonResp).css("color","red");
+                }
+            };
+
+            var testJson = postData();
+            if(!testJson){
+                return;
+            }
+//            var testProto = new TestProto({
+//                id:10014,
+//                name:'testProtoName测试999'
+//            });
+//            console.log(TestProto.decode(testProto.toBuffer()));
+            var data = isProtobuf ? new TestProto(testJson) : testJson;
+            //console.log(data);
+            xhr.send(isProtobuf ? data.toBuffer() : JSON.stringify(data));
+        }
+
+        function postData(){
+            var postData = {};
+            if($id.val() != ''){
+                var idVal = $id.val();
+                postData.id = parseInt(idVal);
+                if(isNaN(postData.id)){
+                    alert('id=[ '+idVal+' ]! input id must int!');
+                    $id.val('');
+                    $id.focus();
+                    return false;
+                }
+            }
+            if($name.val() != ''){
+                postData.name = $name.val();
+            }
+            return postData;
         }
 
         function str2bytes(str){
@@ -98,6 +123,10 @@
             <tr>
                 <td>string name: </td>
                 <td><input type="text" id="name" value="testProtoName测试987"/></td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="protocol" value="protobuf" checked/>protobuf</td>
+                <td><input type="radio" name="protocol" value="json"/>json</td>
             </tr>
             <tr>
                 <td colspan="2"><input type="submit" id="sendButton" value="submit"/></td>
