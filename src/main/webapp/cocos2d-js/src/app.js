@@ -23,13 +23,13 @@ var HttpProtobufLayer = cc.Layer.extend({
         this.addChild(statusGetLabel, 1);
         statusGetLabel.x = winSize.width / 2;
         statusGetLabel.y = winSize.height - 100;
-        statusGetLabel.setString('Status: Send Post Request to "http://localhost:3000/proto"');
+        statusGetLabel.setString('Status: Send Post Request to "http://localhost:3000/proto.why"');
 
         var xhr = cc.loader.getXMLHttpRequest();
         //set arguments with <URL>?xxx=xxx&yyy=yyy
         //xhr.open('GET', 'http://192.168.80.83:8077/huaTeng/userController/getUserInfo.ht?requestInfoStr={\'openid\':\'whg333\'}', true);
 
-        xhr.open('POST', 'http://localhost:3000/test.protobuf');
+        xhr.open('POST', 'http://localhost:3000/proto.why');
 
         //xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         //xhr.setRequestHeader('ht_auth_secret','003964663fccb7d9_404883');

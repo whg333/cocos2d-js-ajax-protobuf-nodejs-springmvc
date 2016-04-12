@@ -1,9 +1,6 @@
 package com.why.game.web.controller;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.why.game.http.HttpServiceCaller;
+import com.why.game.http.JSONUtils;
 import com.why.game.protobuf.TestProtobuf.TestProto;
 
 
@@ -20,48 +18,20 @@ import com.why.game.protobuf.TestProtobuf.TestProto;
 @RequestMapping("/")
 public class TestController {
 
-	@RequestMapping(value="/protobuf")
+	@RequestMapping(value="/json")
 	@ResponseBody
-	public void protobuf(HttpServletResponse response, @RequestParam String userIdStr) throws IOException{
-		System.out.println("userIdStr="+userIdStr);
-		TestProto testProto = HttpServiceCaller.newTestProto();
-		
-		String s = new String(testProto.toByteArray());
-		System.out.println(s);
-		System.out.println(testProto);
-		HttpServiceCaller.printProtoStr(s);
-		
-		OutputStream out = response.getOutputStream();
-		//response.setContentType("application/octet-stream");
-		out.write(testProto.toByteArray());
-		out.close();
+	public Map<String, String> test2(@RequestParam String requestJson){
+		return JSONUtils.fromJSONToMap(requestJson, String.class);
 	}
 	
-	@RequestMapping(value="/param")
+	@RequestMapping(value="/proto")
 	@ResponseBody
-	public ResponseEntity<TestProto> protobuf2(@RequestParam String userIdStr){
-		System.out.println("userIdStr="+userIdStr);
-		TestProto testProto = HttpServiceCaller.newTestProto();
-		
+	public ResponseEntity<TestProto> test(RequestEntity<TestProto> requestProto){
+		TestProto testProto = requestProto.getBody();
 		String s = new String(testProto.toByteArray());
 		System.out.println(s);
 		System.out.println(testProto);
 		HttpServiceCaller.printProtoStr(s);
-		
-		return ResponseEntity.ok(testProto);
-	}
-	
-	@RequestMapping(value="/test")
-	@ResponseBody
-	public ResponseEntity<TestProto> protobuf3(RequestEntity<TestProto> requestEntity){
-		TestProto testProto = requestEntity.getBody();
-		//TestProto testProto = HttpServiceCaller.newTestProto();
-		
-		String s = new String(testProto.toByteArray());
-		System.out.println(s);
-		System.out.println(testProto);
-		HttpServiceCaller.printProtoStr(s);
-		
 		return ResponseEntity.ok(testProto);
 	}
 	

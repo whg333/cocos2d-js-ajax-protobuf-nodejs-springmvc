@@ -24,53 +24,31 @@ import com.why.game.protobuf.TestProtobuf.TestProto;
 
 public class HttpServiceCaller {
 	
-	private static final long userId = 10006;
-	private static final String host = "http://192.168.90.10:8077/huaTeng/";
+	private static final String host = "http://localhost:3000/";
 	
 	public static void main(String[] args) {
-		//testProtobuf();
+		postJson();
 		postProto();
 	}
 	
-	public static void testProtobuf() {
-//		final RequestProperty contentType = new RequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-//		final RequestProperty accept = new RequestProperty("Accept", "application/octet-stream");
-//		
-//		String url = "http://192.168.90.10:8077/huaTeng/testController/protobuf.ht?userIdStr=1234";
-//		
-//		new HttpServiceThread(url, contentType, accept).start();
-		post();
-		post2();
-	}
-	
 	/** 具体的httpclient的使用请参见http://blog.csdn.net/wangpeng047/article/details/19624529 */
-	private static void post() {  
+	private static void postJson() {  
         // 创建默认的httpClient实例.    
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         // 创建httppost    
-        HttpPost httppost = new HttpPost(host+"testController/protobuf.proto");  
+        HttpPost httppost = new HttpPost(host+"json.why");  
         // 创建参数队列    
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();  
-        formparams.add(new BasicNameValuePair("userIdStr", "1234"));  
+        List<NameValuePair> formParams = new ArrayList<NameValuePair>();  
+        formParams.add(new BasicNameValuePair("requestJson", "{\"openid\":\"whg32433测试一下\",\"id\":12243}"));  
         UrlEncodedFormEntity uefEntity;  
         try {  
-            uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");  
+            uefEntity = new UrlEncodedFormEntity(formParams, "UTF-8");
             httppost.setEntity(uefEntity);  
             System.out.println("executing request " + httppost.getURI());  
             CloseableHttpResponse response = httpclient.execute(httppost);  
             try {  
                 HttpEntity entity = response.getEntity();  
-                
-                byte[] bytes = EntityUtils.toByteArray(entity);
-                printHex(bytes);
-                TestProto newTestProto = newTestProto();
-    			byte[] bytes2 = newTestProto.toByteArray();
-    			printHex(bytes2);
-    			
-    			System.out.println();
-    			printTestProto("testProto=", bytes2);
-    			printTestProto("response=", bytes);
-                
+    			System.out.println(EntityUtils.toString(entity));
 //                if (entity != null) {  
 //                    System.out.println("--------------------------------------");  
 //                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
@@ -95,64 +73,11 @@ public class HttpServiceCaller {
         }  
     }
 	
-	private static void post2() {  
-        // 创建默认的httpClient实例.    
-        CloseableHttpClient httpclient = HttpClients.createDefault();  
-        // 创建httppost    
-        HttpPost httppost = new HttpPost(host+"testController/protobuf2.proto");  
-        //httppost.addHeader("Content-Type","application/x-protobuf");
-        httppost.addHeader("Accept", "application/x-protobuf");
-        // 创建参数队列    
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();  
-        formparams.add(new BasicNameValuePair("userIdStr", "1234"));  
-        UrlEncodedFormEntity uefEntity;  
-        try {  
-            uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");  
-            httppost.setEntity(uefEntity);  
-            System.out.println("executing request " + httppost.getURI());  
-            CloseableHttpResponse response = httpclient.execute(httppost);  
-            try {  
-                HttpEntity entity = response.getEntity();  
-                
-                byte[] bytes = EntityUtils.toByteArray(entity);
-                printHex(bytes);
-                TestProto newTestProto = newTestProto();
-    			byte[] bytes2 = newTestProto.toByteArray();
-    			printHex(bytes2);
-    			
-    			System.out.println();
-    			printTestProto("testProto=", bytes2);
-    			printTestProto("response=", bytes);
-                
-//                if (entity != null) {  
-//                    System.out.println("--------------------------------------");  
-//                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
-//                    System.out.println("--------------------------------------");  
-//                }  
-            } finally {  
-                response.close();  
-            }  
-        } catch (ClientProtocolException e) {  
-            e.printStackTrace();  
-        } catch (UnsupportedEncodingException e1) {  
-            e1.printStackTrace();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        } finally {  
-            // 关闭连接,释放资源    
-            try {  
-                httpclient.close();  
-            } catch (IOException e) {  
-                e.printStackTrace();  
-            }  
-        }  
-    }  
-	
 	private static void postProto() {  
         // 创建默认的httpClient实例.    
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         // 创建httppost    
-        HttpPost httppost = new HttpPost(host+"testController/protobuf3.proto");  
+        HttpPost httppost = new HttpPost(host+"/proto.why");  
         httppost.addHeader("Content-Type","application/x-protobuf");
         httppost.addHeader("Accept", "application/x-protobuf");
         
@@ -213,13 +138,14 @@ public class HttpServiceCaller {
 		if(testProto != null){
 			System.out.println(s+testProto);
 			System.out.println(testProto.getId());
+			System.out.println(testProto.getName());
 		}
 	}
 	
 	public static TestProto newTestProto(){
 		TestProto.Builder builder = TestProto.newBuilder();
 		builder.setId(23434);
-		builder.setName("testProtobuf_whg333444");
+		builder.setName("testProtobuf_whg333444测试一下");
 		return builder.build();
 	}
 	

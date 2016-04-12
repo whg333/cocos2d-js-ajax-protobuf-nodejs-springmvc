@@ -43,7 +43,7 @@
 	-->
 	<servlet-mapping>
 		<servlet-name>spring-web</servlet-name>
-		<url-pattern>*.protobuf</url-pattern>
+		<url-pattern>*.why</url-pattern>
 	</servlet-mapping>
 
 

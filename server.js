@@ -43,19 +43,31 @@ var server = http.createServer(function(request, response){
     console.log('process '+request.url);
     if(request.url == '/'){
         filePath = 'index.html';
-    }else if(request.method === 'POST' && request.url.lastIndexOf('.protobuf') != -1){
-        //BufferHelper参考链接 http://www.infoq.com/cn/articles/nodejs-about-buffer/
-        var bufferHelper = new BufferHelper();
-        request.on('data', function (chunk) {
-            bufferHelper.concat(chunk);
-        });
-        request.on('end', function () {
-            var buffer = bufferHelper.toBuffer();
-            var testProtoData = TestProto.decode(buffer);
-            //console.log(testProtoData);
-            response.writeHead(200, {'Content-Type': 'application/x-protobuf'});
-            response.end(testProtoData.toBuffer());
-        });
+    }else if(request.method === 'POST'){
+    	if(request.url.indexOf('json') != -1){
+    		var postData = '';
+            request.on('data', function (chunk) {
+            	postData += chunk;
+            });
+            request.on('end', function () {
+                console.log(postData);
+                response.writeHead(200, {'Content-Type': 'application/json'});
+                response.end(postData);
+            });
+    	}else if(request.url.indexOf('proto') != -1){
+    		//BufferHelper参考链接 http://www.infoq.com/cn/articles/nodejs-about-buffer/
+            var bufferHelper = new BufferHelper();
+            request.on('data', function (chunk) {
+                bufferHelper.concat(chunk);
+            });
+            request.on('end', function () {
+                var buffer = bufferHelper.toBuffer();
+                var testProtoData = TestProto.decode(buffer);
+                //console.log(testProtoData);
+                response.writeHead(200, {'Content-Type': 'application/x-protobuf'});
+                response.end(testProtoData.toBuffer());
+            });
+    	}
 
         return;
     }else{

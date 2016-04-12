@@ -22,7 +22,7 @@
 
             $('#sendForm').submit(function () {
                 var xhr = createXMLHttpRequest();
-                xhr.open('POST', 'http://localhost:3000/test.protobuf');
+                xhr.open('POST', 'http://localhost:3000/proto.why');
                 xhr.setRequestHeader('Content-Type','application/x-protobuf');
                 xhr.setRequestHeader('Accept','application/x-protobuf');
                 if (xhr.overrideMimeType){
