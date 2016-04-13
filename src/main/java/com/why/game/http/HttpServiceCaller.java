@@ -29,13 +29,13 @@ public class HttpServiceCaller {
 	private static final String host = "http://localhost:3000/";
 	
 	public static void main(String[] args) {
-		getParam();
+		postParam();
 		postJson();
 		postProto();
 	}
 	
 	/** 具体的httpclient的使用请参见http://blog.csdn.net/wangpeng047/article/details/19624529 */
-	private static void getParam() {  
+	private static void postParam() {  
         // 创建默认的httpClient实例.    
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         // 创建httppost    
