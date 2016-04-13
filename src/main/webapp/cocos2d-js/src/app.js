@@ -29,7 +29,7 @@ var HttpProtobufLayer = cc.Layer.extend({
         //set arguments with <URL>?xxx=xxx&yyy=yyy
         //xhr.open('GET', 'http://192.168.80.83:8077/huaTeng/userController/getUserInfo.ht?requestInfoStr={\'openid\':\'whg333\'}', true);
 
-        xhr.open('POST', 'http://localhost:3000/proto.why');
+        xhr.open('POST', 'http://localhost:3000/protobuf.why');
 
         //xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         //xhr.setRequestHeader('ht_auth_secret','003964663fccb7d9_404883');
@@ -59,7 +59,7 @@ var HttpProtobufLayer = cc.Layer.extend({
 
         var self = this;
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207)) {
+            if (xhr.readyState == 4 && xhr.status == 200) {
                 var httpStatus = xhr.statusText;
                 statusGetLabel.setString('Status: Got POST response! ' + httpStatus);
 

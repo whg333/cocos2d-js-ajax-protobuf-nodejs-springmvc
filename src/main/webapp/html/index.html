@@ -56,7 +56,7 @@
 
             xhr.setRequestHeader('Content-Type', isProtobuf
                     ? 'application/x-protobuf'
-                    : isParam ? 'application/x-www-form-urlencoded;charset=UTF-8' : 'application/json');
+                    : isParam ? 'application/x-www-form-urlencoded' : 'application/json');
             xhr.setRequestHeader('Accept', isProtobuf ? 'application/x-protobuf' : 'application/json');
             if (isProtobuf && xhr.overrideMimeType){
                 //这个是必须的，否则返回的是字符串，导致protobuf解码错误
@@ -65,7 +65,7 @@
             }
 
             xhr.onreadystatechange = function(){
-                if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207) ) {
+                if (xhr.readyState == 4 && xhr.status == 200) {
                     var data = xhr.responseText;
                     //console.log(xhr.response);
                     //console.log(data);
@@ -138,19 +138,20 @@
         <table>
             <tr>
                 <td>int32 id: </td>
-                <td><input type="text" id="id" value="10014"/></td>
+                <td colspan="3"><input type="text" id="id" value="10014"/></td>
             </tr>
             <tr>
                 <td>string name: </td>
-                <td><input type="text" id="name" value="testProtoName测试987"/></td>
+                <td colspan="3"><input type="text" id="name" value="testProtoName测试987"/></td>
             </tr>
             <tr>
+                <td>protocol: </td>
                 <td><input type="radio" name="protocol" value="protobuf" checked/>protobuf</td>
                 <td><input type="radio" name="protocol" value="json"/>json</td>
                 <td><input type="radio" name="protocol" value="param"/>queryString</td>
             </tr>
             <tr>
-                <td colspan="2"><input type="submit" id="sendButton" value="submit"/></td>
+                <td colspan="4"><input type="submit" id="sendButton" value="submit"/></td>
             </tr>
         </table>
     </form>
