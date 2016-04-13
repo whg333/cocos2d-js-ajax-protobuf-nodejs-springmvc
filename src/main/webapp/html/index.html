@@ -27,6 +27,7 @@
                 if(!protocol){
                     protocol = 'protobuf';
                 }
+                
                 postRequest(protocol);
                 return false;
             });
@@ -43,20 +44,31 @@
 
         function postRequest(protocol){
             var isProtobuf = protocol == 'protobuf';
+            var isParam = protocol == 'param';
+            var testJson = postData();
+            if(!testJson){
+                return;
+            }
+            
             var xhr = createXMLHttpRequest();
-            xhr.open('POST', 'http://localhost:3000/'+protocol+'.why');
-            xhr.setRequestHeader('Content-Type', isProtobuf?'application/x-protobuf':'application/json');
-            xhr.setRequestHeader('Accept', isProtobuf?'application/x-protobuf':'application/json');
+            var url = 'http://localhost:3000/'+protocol+'.why';
+            xhr.open('POST', url);
+
+            xhr.setRequestHeader('Content-Type', isProtobuf
+                    ? 'application/x-protobuf'
+                    : isParam ? 'application/x-www-form-urlencoded;charset=UTF-8' : 'application/json');
+            xhr.setRequestHeader('Accept', isProtobuf ? 'application/x-protobuf' : 'application/json');
             if (isProtobuf && xhr.overrideMimeType){
                 //这个是必须的，否则返回的是字符串，导致protobuf解码错误
                 //具体见http://www.ruanyifeng.com/blog/2012/09/xmlhttprequest_level_2.html
                 xhr.overrideMimeType('text/plain; charset=x-user-defined');
             }
+
             xhr.onreadystatechange = function(){
                 if (xhr.readyState == 4 && (xhr.status >= 200 && xhr.status <= 207) ) {
                     var data = xhr.responseText;
-                    console.log(xhr.response);
-                    console.log(data);
+                    //console.log(xhr.response);
+                    //console.log(data);
                     var jsonResp;
                     if(isProtobuf){
                         var protobufResp = TestProto.decode(str2bytes(data));
@@ -69,18 +81,26 @@
                 }
             };
 
-            var testJson = postData();
-            if(!testJson){
-                return;
-            }
+            
 //            var testProto = new TestProto({
 //                id:10014,
 //                name:'testProtoName测试999'
 //            });
 //            console.log(TestProto.decode(testProto.toBuffer()));
-            var data = isProtobuf ? new TestProto(testJson) : testJson;
-            //console.log(data);
-            xhr.send(isProtobuf ? data.toBuffer() : JSON.stringify(data));
+            xhr.send(isParam
+                    ? requestParam(testJson)
+                    : (isProtobuf ? new TestProto(testJson).toBuffer() : JSON.stringify(testJson)));
+        }
+        
+        function requestParam(data){
+            if(typeof(data) == "string"){
+                return data;
+            }
+            var result = [];
+            for(e in data){
+                result.push(e+"="+data[e]);
+            }
+            return result.join("&");
         }
 
         function postData(){
@@ -127,6 +147,7 @@
             <tr>
                 <td><input type="radio" name="protocol" value="protobuf" checked/>protobuf</td>
                 <td><input type="radio" name="protocol" value="json"/>json</td>
+                <td><input type="radio" name="protocol" value="param"/>queryString</td>
             </tr>
             <tr>
                 <td colspan="2"><input type="submit" id="sendButton" value="submit"/></td>

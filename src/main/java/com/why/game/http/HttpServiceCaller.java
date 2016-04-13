@@ -29,33 +29,30 @@ public class HttpServiceCaller {
 	private static final String host = "http://localhost:3000/";
 	
 	public static void main(String[] args) {
+		getParam();
 		postJson();
 		postProto();
 	}
 	
 	/** 具体的httpclient的使用请参见http://blog.csdn.net/wangpeng047/article/details/19624529 */
-	private static void postParam() {  
+	private static void getParam() {  
         // 创建默认的httpClient实例.    
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         // 创建httppost    
-        HttpPost httppost = new HttpPost(host+"json.why");  
+        HttpPost httpPost = new HttpPost(host+"param.why");
         // 创建参数队列    
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();  
-        formParams.add(new BasicNameValuePair("requestJson", "{\"name\":\"whg32433测试一下\",\"id\":12243}"));  
+        formParams.add(new BasicNameValuePair("id", "12243"));  
+        formParams.add(new BasicNameValuePair("name", "whg32433测试一下"));
         UrlEncodedFormEntity uefEntity;  
         try {  
             uefEntity = new UrlEncodedFormEntity(formParams, "UTF-8");
-            httppost.setEntity(uefEntity);  
-            System.out.println("executing request " + httppost.getURI());  
-            CloseableHttpResponse response = httpclient.execute(httppost);  
+            httpPost.setEntity(uefEntity);  
+            System.out.println("executing request " + httpPost.getURI());  
+            CloseableHttpResponse response = httpclient.execute(httpPost);  
             try {  
                 HttpEntity entity = response.getEntity();  
-    			System.out.println(EntityUtils.toString(entity));
-//                if (entity != null) {  
-//                    System.out.println("--------------------------------------");  
-//                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
-//                    System.out.println("--------------------------------------");  
-//                }  
+    			System.out.println(EntityUtils.toString(entity, "UTF-8"));
             } finally {  
                 response.close();  
             }  
@@ -81,8 +78,8 @@ public class HttpServiceCaller {
         CloseableHttpClient httpclient = HttpClients.createDefault();  
         // 创建httppost    
         HttpPost httpPost = new HttpPost(host+"json.why");
-        httpPost.addHeader("Content-Type","application/json;charset=utf-8");
-        httpPost.addHeader("Accept", "application/json;charset=utf-8");
+        httpPost.addHeader("Content-Type","application/json;charset=UTF-8");
+        httpPost.addHeader("Accept", "application/json;charset=UTF-8");
         // 创建参数队列    
         //List<NameValuePair> formParams = new ArrayList<NameValuePair>();  
         //formParams.add(new BasicNameValuePair("requestJson", "{\"openid\":\"whg32433测试一下\",\"id\":12243}"));  
@@ -94,12 +91,7 @@ public class HttpServiceCaller {
             CloseableHttpResponse response = httpclient.execute(httpPost);
             try {  
                 HttpEntity entity = response.getEntity();  
-    			System.out.println(EntityUtils.toString(entity));
-//                if (entity != null) {  
-//                    System.out.println("--------------------------------------");  
-//                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
-//                    System.out.println("--------------------------------------");  
-//                }  
+    			System.out.println(EntityUtils.toString(entity, "UTF-8"));
             } finally {  
                 response.close();  
             }  
@@ -149,12 +141,6 @@ public class HttpServiceCaller {
     			System.out.println();
     			printTestProto("testProto=", bytes2);
     			printTestProto("response=", bytes);
-                
-//                if (entity != null) {  
-//                    System.out.println("--------------------------------------");  
-//                    System.out.println("Response content: " + EntityUtils.toString(entity, "UTF-8"));  
-//                    System.out.println("--------------------------------------");  
-//                }  
             } finally {  
                 response.close();  
             }  

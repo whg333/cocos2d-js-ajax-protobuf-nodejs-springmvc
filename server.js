@@ -3,6 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var mime = require('mime');
 var open = require('open');
+var querystring = require('querystring');
 
 var webRoot = './src/main/webapp/';
 var protobufDir = webRoot+'protobuf/';
@@ -66,7 +67,23 @@ var server = http.createServer(function(request, response){
                 response.writeHead(200, {'Content-Type': 'application/x-protobuf'});
                 response.end(testProtoData.toBuffer());
             });
-    	}
+    	}else if(request.url.indexOf('param') != -1){
+            var postData = '';
+            request.on('data', function (chunk) {
+                postData += chunk;
+            });
+            request.on('end', function () {
+                var param = querystring.parse(postData);
+                for(var key in param){
+                    var val = param[key];
+                    if(isInt(val)){
+                        param[key] = parseInt(val);
+                    }
+                }
+                response.writeHead(200, {'Content-Type': 'application/json'});
+                response.end(JSON.stringify(param));
+            });
+        }
 
         return;
     }else{
@@ -85,6 +102,10 @@ server.on("error", function(err) {
     console.log("Failed to start server:", err);
     process.exit(1);
 });
+
+function isInt(n) {
+    return parseFloat(n) == parseInt(n, 10) && !isNaN(n);
+}
 
 function serveStatic(response, cache, absPath){
     if(cache[absPath]){
