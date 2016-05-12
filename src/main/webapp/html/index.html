@@ -54,8 +54,7 @@
             var url = 'http://localhost:3000/'+protocol+'.why';
             xhr.open('POST', url);
 
-            xhr.setRequestHeader('Content-Type', isProtobuf
-                    ? 'application/x-protobuf'
+            xhr.setRequestHeader('Content-Type', isProtobuf ? 'application/x-protobuf'
                     : isParam ? 'application/x-www-form-urlencoded' : 'application/json');
             xhr.setRequestHeader('Accept', isProtobuf ? 'application/x-protobuf' : 'application/json');
             if (isProtobuf && xhr.overrideMimeType){
